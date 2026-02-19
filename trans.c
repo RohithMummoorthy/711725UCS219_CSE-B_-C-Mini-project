@@ -20,9 +20,11 @@ void newRecord(FILE *fPtr);
 void deleteRecord(FILE *fPtr);
 void displayAll(FILE *fPtr);
 void searchAccount(FILE *fPtr);
+void logTransaction(unsigned int account, double amount, double newBalance);
 int validAccount(unsigned int account);
 
-// Main
+// MAIN
+
 int main()
 {
     FILE *cfPtr;
@@ -66,13 +68,34 @@ int main()
     return 0;
 }
 
-// Validate account number
+// VALIDATION 
+
 int validAccount(unsigned int account)
 {
     return (account >= 1 && account <= MAX_ACCOUNTS);
 }
 
-// Create formatted text file
+// LOGGING SYSTEM 
+
+void logTransaction(unsigned int account, double amount, double newBalance)
+{
+    FILE *logPtr = fopen("transactions.txt", "a");
+
+    if (logPtr == NULL)
+    {
+        printf("Could not open transaction log file.\n");
+        return;
+    }
+
+    fprintf(logPtr,
+            "Account: %u | Transaction: %.2f | New Balance: %.2f\n",
+            account, amount, newBalance);
+
+    fclose(logPtr);
+}
+
+// CREATE TEXT FILE 
+
 void textFile(FILE *readPtr)
 {
     FILE *writePtr;
@@ -105,7 +128,8 @@ void textFile(FILE *readPtr)
     printf("accounts.txt created successfully.\n");
 }
 
-// Update account with negative balance prevention
+//  UPDATE ACCOUNT
+
 void updateRecord(FILE *fPtr)
 {
     struct clientData client;
@@ -145,10 +169,13 @@ void updateRecord(FILE *fPtr)
     fseek(fPtr, -((long)sizeof(struct clientData)), SEEK_CUR);
     fwrite(&client, sizeof(struct clientData), 1, fPtr);
 
+    logTransaction(account, transaction, client.balance);
+
     printf("Balance updated successfully.\n");
 }
 
-// Add new account
+//  ADD NEW ACCOUNT
+
 void newRecord(FILE *fPtr)
 {
     struct clientData client = {0, "", "", 0.0};
@@ -189,10 +216,13 @@ void newRecord(FILE *fPtr)
     fseek(fPtr, (account - 1) * sizeof(struct clientData), SEEK_SET);
     fwrite(&client, sizeof(struct clientData), 1, fPtr);
 
+    logTransaction(account, client.balance, client.balance);
+
     printf("Account created successfully.\n");
 }
 
-// Delete account
+//  DELETE ACCOUNT 
+
 void deleteRecord(FILE *fPtr)
 {
     struct clientData client;
@@ -217,13 +247,16 @@ void deleteRecord(FILE *fPtr)
         return;
     }
 
+    logTransaction(account, -client.balance, 0.0);
+
     fseek(fPtr, (account - 1) * sizeof(struct clientData), SEEK_SET);
     fwrite(&blankClient, sizeof(struct clientData), 1, fPtr);
 
     printf("Account deleted successfully.\n");
 }
 
-// Display all accounts
+// DISPLAY ALL
+
 void displayAll(FILE *fPtr)
 {
     struct clientData client;
@@ -246,7 +279,8 @@ void displayAll(FILE *fPtr)
     }
 }
 
-// Search account
+// SEARCH ACCOUNT
+
 void searchAccount(FILE *fPtr)
 {
     struct clientData client;
@@ -277,7 +311,7 @@ void searchAccount(FILE *fPtr)
     printf("Balance        : %.2f\n", client.balance);
 }
 
-// Menu
+// MENU
 unsigned int enterChoice(void)
 {
     unsigned int choice;
@@ -294,3 +328,4 @@ unsigned int enterChoice(void)
     scanf("%u", &choice);
     return choice;
 }
+
