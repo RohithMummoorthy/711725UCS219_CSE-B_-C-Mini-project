@@ -1,4 +1,3 @@
 Acct  Last Name       First Name    Balance
 1     John            Joe          21222.00
-2     M               Rohith       2000.00
-
+134217728�@                             0.00
