@@ -1,0 +1,7 @@
+Account: 3 | Transaction: 10000.00 | New Balance: 10000.00
+Account: 4 | Transaction: 10000.00 | New Balance: 10000.00
+Account: 4 | Transaction: -10000.00 | New Balance: 0.00
+Account: 2 | Transaction: 0.97 | New Balance: 0.00
+Account: 3 | Transaction: -10000.00 | New Balance: 0.00
+Account: 6 | Transaction: -0.00 | New Balance: 0.00
+Account: 1 | Transaction: 20000.00 | New Balance: 21222.00
