@@ -23,6 +23,9 @@ void searchAccount(FILE *fPtr);
 void logTransaction(unsigned int account, double amount, double newBalance);
 int validAccount(unsigned int account);
 void initializeFile();
+void accountSummary(FILE *fPtr);
+void viewTransactions();
+void sortAccounts(FILE *fPtr);
 
 // MAIN
 
@@ -49,7 +52,7 @@ int main()
     }
 
     // Menu loop
-    while ((choice = enterChoice()) != 7)
+    while ((choice = enterChoice()) != 10)
     {
         switch (choice)
         {
@@ -70,6 +73,15 @@ int main()
             break;
         case 6:
             searchAccount(cfPtr);
+            break;
+        case 7:
+            accountSummary(cfPtr);
+            break;
+        case 8:
+            viewTransactions();
+            break;
+        case 9:
+            sortAccounts(cfPtr);
             break;
         default:
             printf("Invalid choice.\n");
@@ -279,16 +291,24 @@ void displayAll(FILE *fPtr)
     printf("\n%-6s%-16s%-11s%10s\n",
            "Acct", "Last Name", "First Name", "Balance");
 
+    int found = 0;
+
     while (fread(&client, sizeof(struct clientData), 1, fPtr) == 1)
     {
         if (client.acctNum != 0)
         {
+            found = 1;
             printf("%-6u%-16s%-11s%10.2f\n",
-                   client.acctNum,
-                   client.lastName,
-                   client.firstName,
-                   client.balance);
+                    client.acctNum,
+                    client.lastName,
+                    client.firstName,
+                    client.balance);
         }
+    }
+
+    if (!found)
+    {
+        printf("No accounts available.\n");
     }
 }
 
@@ -336,7 +356,11 @@ unsigned int enterChoice(void)
            "4 - delete an account\n"
            "5 - display all accounts\n"
            "6 - search an account\n"
-           "7 - end program\n? ");
+           "7 - account summary\n"
+           "8 - view transaction history\n"
+           "9 - sort accounts by balance\n"
+           "10 - end program\n? ");
+
 
     scanf("%u", &choice);
     return choice;
@@ -361,4 +385,93 @@ void initializeFile()
 
     fclose(fp);
     printf("File initialized successfully.\n");
+}
+
+void accountSummary(FILE *fPtr)
+{
+    struct clientData client;
+    int count = 0;
+    double total = 0;
+
+    rewind(fPtr);
+
+    while (fread(&client, sizeof(struct clientData), 1, fPtr) == 1)
+    {
+        if (client.acctNum != 0)
+        {
+            count++;
+            total += client.balance;
+        }
+    }
+
+    printf("\n--- ACCOUNT SUMMARY ---\n");
+    printf("Total Accounts : %d\n", count);
+    printf("Total Balance  : %.2f\n", total);
+
+    if (count > 0)
+        printf("Average Balance: %.2f\n", total / count);
+    else
+        printf("Average Balance: 0.00\n");
+}
+
+void viewTransactions()
+{
+    FILE *fp = fopen("transactions.txt", "r");
+    char line[200];
+
+    if (fp == NULL)
+    {
+        printf("No transactions found.\n");
+        return;
+    }
+
+    printf("\n--- TRANSACTION HISTORY ---\n");
+
+    while (fgets(line, sizeof(line), fp))
+    {
+        printf("%s", line);
+    }
+
+    fclose(fp);
+}
+
+void sortAccounts(FILE *fPtr)
+{
+    struct clientData clients[100];
+    int count = 0;
+
+    rewind(fPtr);
+
+    while (fread(&clients[count], sizeof(struct clientData), 1, fPtr) == 1)
+    {
+        if (clients[count].acctNum != 0)
+        {
+            count++;
+        }
+    }
+
+    // Bubble sort (by balance descending)
+    for (int i = 0; i < count - 1; i++)
+    {
+        for (int j = 0; j < count - i - 1; j++)
+        {
+            if (clients[j].balance < clients[j + 1].balance)
+            {
+                struct clientData temp = clients[j];
+                clients[j] = clients[j + 1];
+                clients[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("\n--- SORTED ACCOUNTS (HIGH TO LOW) ---\n");
+
+    for (int i = 0; i < count; i++)
+    {
+        printf("%-6u%-16s%-11s%10.2f\n",
+               clients[i].acctNum,
+               clients[i].lastName,
+               clients[i].firstName,
+               clients[i].balance);
+    }
 }
