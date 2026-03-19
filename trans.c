@@ -22,6 +22,7 @@ void displayAll(FILE *fPtr);
 void searchAccount(FILE *fPtr);
 void logTransaction(unsigned int account, double amount, double newBalance);
 int validAccount(unsigned int account);
+void initializeFile();
 
 // MAIN
 
@@ -30,12 +31,24 @@ int main()
     FILE *cfPtr;
     unsigned int choice;
 
-    if ((cfPtr = fopen("credit.dat", "rb+")) == NULL)
+    // Try opening existing file
+    cfPtr = fopen("credit.dat", "rb+");
+
+    // If file does not exist → create and initialize
+    if (cfPtr == NULL)
+    {
+        initializeFile();   // create 100 blank records
+        cfPtr = fopen("credit.dat", "rb+");
+    }
+
+    // Final safety check
+    if (cfPtr == NULL)
     {
         printf("File could not be opened.\n");
         exit(1);
     }
 
+    // Menu loop
     while ((choice = enterChoice()) != 7)
     {
         switch (choice)
@@ -329,3 +342,23 @@ unsigned int enterChoice(void)
     return choice;
 }
 
+void initializeFile()
+{
+    FILE *fp = fopen("credit.dat", "wb");
+
+    if (fp == NULL)
+    {
+        printf("Error creating file.\n");
+        return;
+    }
+
+    struct clientData blank = {0, "", "", 0.0};
+
+    for (int i = 0; i < 100; i++)
+    {
+        fwrite(&blank, sizeof(struct clientData), 1, fp);
+    }
+
+    fclose(fp);
+    printf("File initialized successfully.\n");
+}
