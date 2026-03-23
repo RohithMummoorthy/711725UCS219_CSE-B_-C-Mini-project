@@ -5,3 +5,12 @@
 [20/03/2026 10:00:03] | Acct:3    | Type:OPEN         | Amt:+5000000.00 | Bal:5000000.00
 [20/03/2026 10:12:41] | Acct:4    | Type:OPEN         | Amt:  +2000.00 | Bal:   2000.00
 [20/03/2026 10:19:29] | Acct:5    | Type:OPEN         | Amt:   +500.00 | Bal:    500.00
+[23/03/2026 07:45:06] | Acct:4    | Type:CLOSE        | Amt:  -2000.00 | Bal:      0.00
+[23/03/2026 07:45:39] | Acct:5    | Type:CLOSE        | Amt:   -500.00 | Bal:      0.00
+[23/03/2026 07:46:36] | Acct:1    | Type:INTEREST     | Amt:     +7.52 | Bal:   3015.02
+[23/03/2026 07:46:36] | Acct:3    | Type:INTEREST     | Amt: +12500.00 | Bal:5012500.00
+[23/03/2026 08:09:38] | Acct:4    | Type:OPEN         | Amt:  +5000.00 | Bal:   5000.00
+[23/03/2026 08:10:44] | Acct:4    | Type:TRANSFER_OUT | Amt:   -200.00 | Bal:   4800.00 | To:2
+[23/03/2026 08:10:44] | Acct:2    | Type:TRANSFER_IN  | Amt:   +200.00 | Bal:  20150.00 | To:4
+[23/03/2026 08:11:01] | Acct:4    | Type:ATM_WITHDRAW | Amt:   -100.00 | Bal:   4700.00
+[23/03/2026 08:12:28] | Acct:4    | Type:FD_OPEN      | Amt:  -4000.00 | Bal:    700.00
